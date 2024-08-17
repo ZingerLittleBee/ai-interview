@@ -1,24 +1,23 @@
-import { useRef, useState } from "react";
+'use client'
+
+import { useRef } from "react";
 import { CloudUpload } from "lucide-react";
 import { useInterviewStore } from "@/store";
-import { text_to_speech } from "@/lib/tts";
+import { textToSpeech } from "@/lib/tts";
+import useUpload from "@/hook/useUpload";
 
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
-  const uploadRef = useRef<HTMLInputElement>(null);
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const fileReader = new FileReader();
-      fileReader.onload = () => {
-        const typedArray = new Uint8Array(fileReader.result as ArrayBuffer);
-        const blob = new Blob([typedArray], { type: "application/pdf" });
-        setFileUrl(URL.createObjectURL(blob));
-        // todo 需要生成10个问题
-        setPage("interview");
-      };
-      fileReader.readAsArrayBuffer(file);
+  const { handleUpload } = useUpload();
+
+    const uploadRef = useRef<HTMLInputElement>(null);
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) {
+        void textToSpeech("您似乎没有上传简历，请检查后重试")
+        return;
     }
+    await handleUpload(event.target.files?.[0]);
+    void textToSpeech("简历上传成功，请稍等片刻，面试即将开始")
   };
   return (
     <>
@@ -36,7 +35,7 @@ const UploadViewLayout = () => {
 
         <div
           onClick={() => {
-            text_to_speech("你好，我是面试官，请你自我介绍一下");
+              textToSpeech("你好，我是面试官，请你自我介绍一下");
           }}
         >
           test tts

@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useRef, useEffect, useState } from "react";
 import { Worker, Viewer } from "@react-pdf-viewer/core";
 import { toolbarPlugin } from "@react-pdf-viewer/toolbar";

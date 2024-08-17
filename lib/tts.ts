@@ -1,4 +1,4 @@
-export const text_to_speech = async (prompt: string) => {
+export const textToSpeech = async (prompt: string) => {
   const response = await fetch("/api/tts", {
     method: "POST",
     headers: {
