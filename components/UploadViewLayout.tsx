@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { CloudUpload } from "lucide-react";
 import { useInterviewStore } from "@/store";
+import { text_to_speech } from "@/lib/tts";
 
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
@@ -31,6 +32,14 @@ const UploadViewLayout = () => {
         >
           <CloudUpload />
           <div className="text-sm">仅支持PDF</div>
+        </div>
+
+        <div
+          onClick={() => {
+            text_to_speech("你好，我是面试官，请你自我介绍一下");
+          }}
+        >
+          test tts
         </div>
       </div>
       <input
