@@ -1,6 +1,16 @@
 import { create } from "zustand";
 
-export const useInterviewStore = create((set) => ({
+type State = {
+  fileUrl: string | null;
+  page: "upload" | "interview" | "result";
+}
+
+type Actions = {
+  setFileUrl: (fileUrl: string | null) => void;
+  setPage: (page: "upload" | "interview" | "result") => void;
+}
+
+export const useInterviewStore = create<State & Actions>((set) => ({
   fileUrl: null,
   setFileUrl: (fileUrl: string | null) => set(() => ({ fileUrl })),
   page: "upload",
