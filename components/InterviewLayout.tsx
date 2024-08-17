@@ -6,35 +6,17 @@ import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
 import "@react-pdf-viewer/core/lib/styles/index.css";
 import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import { useInterviewStore } from "@/store";
+import {useChat} from "ai/react";
 
-enum MessageType {
-  "AIMessage",
-  "HumanMessage",
-}
-const mockMessages = [
-  {
-    type: MessageType.HumanMessage,
-    text: "您好",
-  },
-  {
-    type: MessageType.AIMessage,
-    text: "你好，请简短介绍一下你自己",
-  },
-  {
-    type: MessageType.HumanMessage,
-    text: "好的，我的名字是XXXXX..........",
-  },
-  {
-    type: MessageType.AIMessage,
-    text: "你的简历中写到XXXX请问XXXX你的简历中写到XXXX请问XXXX你的简历中写到XXXX请问XXXX你的简历中写到XXXX请问XXXX你的简历中写到XXXX请问XXXX",
-  },
-];
 const WebcamInterviewPage = () => {
+  const { messages, input, handleInputChange, handleSubmit } = useChat();
+
   const videoRef = useRef<HTMLVideoElement>(null);
   const { fileUrl } = useInterviewStore();
   const toolbarPluginInstance = toolbarPlugin();
   const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [tab, setTab] = useState<"resume" | "chat">("resume");
+
 
   useEffect(() => {
     // Request access to the webcam
@@ -131,19 +113,27 @@ const WebcamInterviewPage = () => {
         {tab === "chat" && (
           <div className="bg-white p-4 rounded-lg shadow-md flex-1 overflow-scroll">
             <div className="flex flex-col space-y-2">
-              {mockMessages.map((item, i) => {
-                const isAi = item.type === MessageType.AIMessage;
-                return (
-                  <div key={i}>
-                    <p
-                      className={`font-bold  ${isAi ? "text-blue-400" : "text-yellow-400"}`}
-                    >
-                      {isAi ? "面试官：" : "面试者："}
-                    </p>
-                    <p className="text-gray-700">{item.text}</p>
+              {messages.map(m => {
+                  const isAi = m.role !== 'user'
+                  return <div key={m.id} className="whitespace-pre-wrap">
+                      <p
+                          className={`font-bold  ${isAi ? "text-blue-400" : "text-yellow-400"}`}
+                      >
+                        {isAi ? "面试官：" : "面试者："}
+                      </p>
+                      <p className="text-gray-700">{m.content}</p>
                   </div>
-                );
               })}
+            </div>
+            <div>
+              <form onSubmit={handleSubmit}>
+                <input
+                    className="fixed bottom-0 w-full max-w-md p-2 mb-8 border border-gray-300 rounded shadow-xl"
+                    value={input}
+                    placeholder="输入你的答案，回车发送"
+                  onChange={handleInputChange}
+              />
+            </form>
             </div>
           </div>
         )}
