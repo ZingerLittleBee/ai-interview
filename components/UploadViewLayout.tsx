@@ -1,10 +1,12 @@
 'use client'
 
 import { useRef } from "react";
-import { CloudUpload } from "lucide-react";
+import {UploadIcon} from "lucide-react";
 import { useInterviewStore } from "@/store";
 import { textToSpeech } from "@/lib/tts";
 import useUpload from "@/hook/useUpload";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Input} from "@/components/ui/input";
 
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
@@ -23,36 +25,54 @@ const UploadViewLayout = () => {
       }, 1000)
   };
   return (
-    <>
       <div className="w-full h-auto min-h-screen flex flex-col justify-center items-center space-y-16">
-        <div className="text-3xl font-semibold">请上传你的简历</div>
-        <div
-          className="rounded-lg border bg-card text-card-foreground shadow-sm w-[350px] h-[200px] justify-center place-items-center flex flex-col space-y-2 cursor-pointer"
-          onClick={() => {
-            uploadRef.current?.click();
-          }}
-        >
-          <CloudUpload />
-          <div className="text-sm">仅支持PDF</div>
-        </div>
+            <Card className="w-full max-w-md">
+                <CardHeader>
+                    <CardTitle>请上传你的简历</CardTitle>
+                    <CardDescription>拖放 PDF 文件或单击选择文件</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="grid gap-4"
 
-        <div
-          onClick={() => {
-              textToSpeech("你好，我是面试官，请你自我介绍一下");
-          }}
-        >
-          test tts
-        </div>
-      </div>
-      <input
-        ref={uploadRef}
-        type="file"
-        accept="application/pdf"
-        className="hidden"
-        onChange={handleFileChange}
-      />
-    </>
-  );
+                    >
+                        <div className="cursor-pointer flex h-40 items-center justify-center rounded-md border border-dashed bg-muted transition-colors hover:border-primary hover:bg-muted-foreground/10"
+                             onClick={() => {
+                                 uploadRef.current?.click();
+                             }}
+                        >
+                            <div className="mx-auto flex flex-col items-center space-y-2 text-center">
+                                <UploadIcon className="h-8 w-8 text-muted-foreground" />
+                                <p className="text-sm font-medium text-muted-foreground">点击上传</p>
+                                <p className="text-xs text-muted-foreground">仅支持PDF</p>
+                                <Input ref={uploadRef} type="file" accept="application/pdf" onChange={handleFileChange} className="hidden" />
+                            </div>
+                        </div>
+                    </div>
+                </CardContent>
+            </Card>
+    </div>
+        )
 };
 
 export default UploadViewLayout;
+
+
+//     <div className="text-3xl font-semibold">请上传你的简历</div>
+//     <div
+//       className="rounded-lg border bg-card text-card-foreground shadow-sm w-[350px] h-[200px] justify-center place-items-center flex flex-col space-y-2 cursor-pointer"
+//       onClick={() => {
+//         uploadRef.current?.click();
+//       }}
+//     >
+//       <CloudUpload />
+//       <div className="text-sm">仅支持PDF</div>
+//     </div>
+//   </div>
+//   <input
+//     ref={uploadRef}
+//     type="file"
+//     accept="application/pdf"
+//     className="hidden"
+//     onChange={handleFileChange}
+//   />
+// </>
