@@ -16,11 +16,11 @@ export const pdfToString = (pdfPath: string): Promise<string> => {
     });
 };
 
-const pdfPath = "resume.pdf";
-pdfToString(pdfPath)
-    .then((text) => {
-        console.log(text);
-    })
-    .catch((error) => {
-        console.error("Error:", error);
-    });
+// const pdfPath = "resume.pdf";
+// pdfToString(pdfPath)
+//     .then((text) => {
+//         console.log(text);
+//     })
+//     .catch((error) => {
+//         console.error("Error:", error);
+//     });
