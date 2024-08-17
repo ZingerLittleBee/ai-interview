@@ -17,7 +17,10 @@ const UploadViewLayout = () => {
         return;
     }
     await handleUpload(event.target.files?.[0]);
-    void textToSpeech("简历上传成功，请稍等片刻，面试即将开始")
+    await textToSpeech("简历上传成功，请稍等片刻，面试即将开始")
+      setTimeout(() => {
+        setPage('interview')
+      }, 1000)
   };
   return (
     <>

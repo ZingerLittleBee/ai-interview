@@ -1,4 +1,4 @@
-export const textToSpeech = async (prompt: string) => {
+export const textToSpeech = async (prompt: string): Promise<void> => {
   const response = await fetch("/api/tts", {
     method: "POST",
     headers: {
@@ -23,7 +23,5 @@ export const textToSpeech = async (prompt: string) => {
   audio.src = audioUrl;
 
   // 播放
-  audio.play();
-
-  return audio;
+  return audio.play();
 };
