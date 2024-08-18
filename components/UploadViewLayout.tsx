@@ -48,7 +48,7 @@ const UploadViewLayout = () => {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle>请上传你的简历</CardTitle>
-          <CardDescription>拖放 PDF 文件或单击选择文件</CardDescription>
+          <CardDescription>单击选择 PDF 文件</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-4">
