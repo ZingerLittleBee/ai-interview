@@ -46,7 +46,7 @@ const UploadViewLayout = () => {
   };
   return (
     <>
-      <div className="w-full h-auto min-h-screen flex flex-col justify-center items-center space-y-16">
+      <div className="relative w-full h-auto min-h-screen flex flex-col justify-center items-center space-y-16 z-50">
         <h1 className="text-4xl font-bold">随时随地，轻松开始面试</h1>
         <Card className="w-full max-w-md">
           <CardHeader>
@@ -80,7 +80,20 @@ const UploadViewLayout = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="absolute top-0 right-16 h-screen w-[254px] flex justify-center items-center">
+      <div className="absolute top-0 left-0 right-0 h-[72px] flex items-center justify-center">
+        <div className="w-full h-11 flex items-center px-6">
+          <div className="h-7 flex items-center space-x-2">
+            <Image
+              src="/favicon-192.png"
+              width={28}
+              height={28}
+              alt="interview"
+            />
+            <div className="text-[18px] font-semibold">Ai 面试官</div>
+          </div>
+        </div>
+      </div>
+      <div className="absolute top-0 right-16 h-screen w-[254px] flex justify-center items-center px-6">
         <div className="relative w-full h-[311px]">
           <span className="eye"></span>
           <span className="eye !ml-2"></span>
