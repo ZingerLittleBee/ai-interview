@@ -88,6 +88,9 @@ dependencies:
     version: 4.5.5(@types/react@18.3.3)(react@18.3.1)
 
 devDependencies:
+  '@types/dom-speech-recognition':
+    specifier: ^0.0.4
+    version: 0.0.4
   '@types/node':
     specifier: ^20
     version: 20.14.15
@@ -1177,6 +1180,10 @@ packages:
   /@types/diff-match-patch@1.0.36:
     resolution: {integrity: sha512-xFdR6tkm0MWvBfO8xXCSsinYxHcqkQUlcHeSpMC2ukzOb6lwQAfDmW+Qt0AvlGd8HpsS28qKsB+oPeJn9I39jg==}
     dev: false
+
+  /@types/dom-speech-recognition@0.0.4:
+    resolution: {integrity: sha512-zf2GwV/G6TdaLwpLDcGTIkHnXf8JEf/viMux+khqKQKDa8/8BAUtXXZS563GnvJ4Fg0PBLGAaFf2GekEVSZ6GQ==}
+    dev: true
 
   /@types/estree@1.0.5:
     resolution: {integrity: sha512-/kYRxGDLWzHOB7q+wtSUQlFrtcdUccpfy+X+9iMBpHK8QLLhx2wIPYuS5DYtR9Wa/YlZAbIovy7qVdB1Aq6Lyw==}
