@@ -13,6 +13,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
@@ -44,39 +45,49 @@ const UploadViewLayout = () => {
     }, 1000);
   };
   return (
-    <div className="w-full h-auto min-h-screen flex flex-col justify-center items-center space-y-16">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>请上传你的简历</CardTitle>
-          <CardDescription>单击选择 PDF 文件</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="grid gap-4">
-            <div
-              className="cursor-pointer flex h-40 items-center justify-center rounded-md border border-dashed bg-muted transition-colors hover:border-primary hover:bg-muted-foreground/10"
-              onClick={() => {
-                uploadRef.current?.click();
-              }}
-            >
-              <div className="mx-auto flex flex-col items-center space-y-2 text-center">
-                <UploadIcon className="h-8 w-8 text-muted-foreground" />
-                <p className="text-sm font-medium text-muted-foreground">
-                  点击上传
-                </p>
-                <p className="text-xs text-muted-foreground">仅支持PDF</p>
-                <Input
-                  ref={uploadRef}
-                  type="file"
-                  accept="application/pdf"
-                  onChange={handleFileChange}
-                  className="hidden"
-                />
+    <>
+      <div className="w-full h-auto min-h-screen flex flex-col justify-center items-center space-y-16">
+        <h1 className="text-4xl font-bold">随时随地，轻松开始面试</h1>
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>请上传你的简历</CardTitle>
+            <CardDescription>单击选择 PDF 文件</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid gap-4">
+              <div
+                className="cursor-pointer flex h-40 items-center justify-center rounded-md border border-dashed bg-muted transition-colors hover:border-primary hover:bg-muted-foreground/10"
+                onClick={() => {
+                  uploadRef.current?.click();
+                }}
+              >
+                <div className="mx-auto flex flex-col items-center space-y-2 text-center">
+                  <UploadIcon className="h-8 w-8 text-muted-foreground" />
+                  <p className="text-sm font-medium text-muted-foreground">
+                    点击上传
+                  </p>
+                  <p className="text-xs text-muted-foreground">仅支持PDF</p>
+                  <Input
+                    ref={uploadRef}
+                    type="file"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                    className="hidden"
+                  />
+                </div>
               </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="absolute top-0 right-16 h-screen w-[254px] flex justify-center items-center">
+        <div className="relative w-full h-[311px]">
+          <span className="eye"></span>
+          <span className="eye !ml-2"></span>
+          <Image src="/interview.png" fill alt="interview" />
+        </div>
+      </div>
+    </>
   );
 };
 
