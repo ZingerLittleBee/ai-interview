@@ -15,4 +15,3 @@ class GlobalRef<T> {
 }
 
 export const resumeDatabase = new GlobalRef<String>('resume.database');
-
