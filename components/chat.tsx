@@ -10,7 +10,7 @@ import voiceAnimation from '@/public/voice.json'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 export default function ChatWidget({ className} : {className?: string}) {
-    const { messages, sendMsg } = useInterview();
+    const { messages, sendMsg, isPlaying, setIsPlaying } = useInterview();
     const endOfMessagesRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState(true)
 
@@ -25,6 +25,7 @@ export default function ChatWidget({ className} : {className?: string}) {
     })
 
     const handleRecoding = useCallback(async () => {
+        if (isPlaying) return
         if (isPaused) {
             play()
             await SpeechRecognition.startListening({
@@ -33,12 +34,13 @@ export default function ChatWidget({ className} : {className?: string}) {
         } else {
             await SpeechRecognition.stopListening()
             stop()
+            setIsPlaying(true)
             await sendMsg(transcript)
             setTimeout(() => resetTranscript(), 100)
         }
         setIsPaused(!isPaused)
 
-    }, [isPaused, play, resetTranscript, sendMsg, stop, transcript])
+    }, [isPaused, isPlaying, play, resetTranscript, sendMsg, setIsPlaying, stop, transcript])
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -46,9 +48,10 @@ export default function ChatWidget({ className} : {className?: string}) {
 
     return (
             <div className={cn("flex flex-col h-full justify-between bg-background overflow-auto", className)}>
-                {
-                    transcript
+                isPlaying: {
+                    isPlaying.toString()
                 }
+
                 <div className="flex-1 overflow-auto p-4 pb-10 space-y-4">
                     {
                         messages.map(m => {
@@ -76,10 +79,12 @@ export default function ChatWidget({ className} : {className?: string}) {
                 </div>
                 <div className="bg-slate-800 p-4 flex items-center gap-2">
                     <div
-                     className="flex flex-col w-full justify-center items-center"
+                     className="flex flex-col w-full justify-center items-center  "
                     >
-                        <div onClick={handleRecoding} className="cursor-pointer">{View}</div>
-                        <p className="text-muted/80">点击{isPaused ? '开始' : '结束'}录制</p>
+                        <div onClick={handleRecoding} className={cn(isPlaying ? 'cursor-not-allowed mix-blend-multiply' : 'cursor-pointer')}>{View}</div>
+                        <p className="text-muted/80">{
+                            isPlaying ? '请等待' : `点击${isPaused ? '开始' : '结束'}回答`
+                        }</p>
                     </div>
                 </div>
             </div>

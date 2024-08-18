@@ -1,7 +1,10 @@
-import { textToSpeech } from "@/lib/tts";
 import { useChat } from "ai/react";
+import useTextToSpeech from "@/hook/useTextToSpeech";
 
 export default function useInterview() {
+
+  const { textToSpeech, isPlaying, setIsPlaying } = useTextToSpeech()
+
   const { messages, input, handleInputChange, handleSubmit, append } = useChat({
     onFinish: (message) => {
       textToSpeech(message.content);
@@ -21,5 +24,7 @@ export default function useInterview() {
     input,
     handleInputChange,
     handleSubmit,
+    isPlaying,
+    setIsPlaying
   };
 }

@@ -22,6 +22,11 @@ export const textToSpeech = async (prompt: string): Promise<void> => {
   // 设置音频源
   audio.src = audioUrl;
 
+  audio.addEventListener('ended', () => {
+    console.log('音频播放完毕');
+    URL.revokeObjectURL(audioUrl);
+  });
+
   // 播放
   return audio.play();
 };
