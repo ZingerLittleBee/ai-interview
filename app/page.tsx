@@ -10,12 +10,10 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const { page } = useInterviewStore();
   return (
-
-      <InterviewLayout />
-    // <>
-    //   {page === "upload" && <UploadViewLayout />}
-    //   {page === "interview" && <InterviewLayout />}
-    //   {page === "result" && <div>result</div>}
-    // </>
+    <>
+      {page === "upload" && <UploadViewLayout />}
+      {page === "interview" && <InterviewLayout />}
+      {page === "result" && <div>result</div>}
+    </>
   );
 }

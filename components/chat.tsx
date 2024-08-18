@@ -47,11 +47,7 @@ export default function ChatWidget({ className} : {className?: string}) {
     }, [messages]);
 
     return (
-            <div className={cn("flex flex-col h-full justify-between bg-background overflow-auto", className)}>
-                isPlaying: {
-                    isPlaying.toString()
-                }
-
+            <div className={cn("relative flex flex-col h-full justify-between bg-background overflow-auto", className)}>
                 <div className="flex-1 overflow-auto p-4 pb-10 space-y-4">
                     {
                         messages.map(m => {
