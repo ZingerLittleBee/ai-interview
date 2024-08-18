@@ -1,14 +1,44 @@
-import { Button } from "@/components/ui/button"
+"use client"
+
+import 'regenerator-runtime/runtime'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import { Textarea } from "@/components/ui/textarea"
-import {SendIcon} from "lucide-react";
-import {useEffect, useRef} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
 import useInterview from "@/hook/useInterview";
+import {useLottie} from "lottie-react";
+import voiceAnimation from '@/public/voice.json'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 export default function ChatWidget({ className} : {className?: string}) {
-    const { messages, input, handleInputChange, handleSubmit } = useInterview();
+    const { messages, sendMsg } = useInterview();
     const endOfMessagesRef = useRef<HTMLDivElement>(null);
+    const [isPaused, setIsPaused] = useState(true)
+
+    const {
+        transcript,
+        resetTranscript,
+    } = useSpeechRecognition();
+
+    const { View, play, stop } = useLottie({
+        animationData: voiceAnimation,
+        autoplay: false,
+    })
+
+    const handleRecoding = useCallback(async () => {
+        if (isPaused) {
+            play()
+            await SpeechRecognition.startListening({
+                continuous: true
+            })
+        } else {
+            await SpeechRecognition.stopListening()
+            stop()
+            await sendMsg(transcript)
+            setTimeout(() => resetTranscript(), 100)
+        }
+        setIsPaused(!isPaused)
+
+    }, [isPaused, play, resetTranscript, sendMsg, stop, transcript])
 
     useEffect(() => {
         endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -16,6 +46,9 @@ export default function ChatWidget({ className} : {className?: string}) {
 
     return (
             <div className={cn("flex flex-col h-full justify-between bg-background overflow-auto", className)}>
+                {
+                    transcript
+                }
                 <div className="flex-1 overflow-auto p-4 pb-10 space-y-4">
                     {
                         messages.map(m => {
@@ -41,18 +74,13 @@ export default function ChatWidget({ className} : {className?: string}) {
                     }
                     <div ref={endOfMessagesRef}/>
                 </div>
-                <div className="bg-muted p-4 flex items-center gap-2">
-                    <Textarea
-                        value={input}
-                        placeholder="请输入你的答案"
-                        className="flex-1 bg-background text-foreground max-h-[300px]"
-                        onChange={handleInputChange}
-                    />
-                    <Button variant="ghost" size="icon" className="text-muted-foreground hover:bg-muted/50"
-                    onClick={handleSubmit}
+                <div className="bg-slate-800 p-4 flex items-center gap-2">
+                    <div
+                     className="flex flex-col w-full justify-center items-center"
                     >
-                        <SendIcon className="w-5 h-5" />
-                    </Button>
+                        <div onClick={handleRecoding} className="cursor-pointer">{View}</div>
+                        <p className="text-muted/80">点击{isPaused ? '开始' : '结束'}录制</p>
+                    </div>
                 </div>
             </div>
         )
