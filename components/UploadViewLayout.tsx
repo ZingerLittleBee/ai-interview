@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { UploadIcon } from "lucide-react";
 import { useInterviewStore } from "@/store";
 import { textToSpeech } from "@/lib/tts";
@@ -14,11 +14,12 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import LoadingSvg from '@/public/loading.svg'
 
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
   const { handleUpload } = useUpload();
-
+  const [loading, setLoading] = useState(false)
   const uploadRef = useRef<HTMLInputElement>(null);
   const handleFileChange = async (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -27,6 +28,7 @@ const UploadViewLayout = () => {
       void textToSpeech("您似乎没有上传简历，请检查后重试");
       return;
     }
+    setLoading(true)
     const file = event.target.files?.[0];
     await handleUpload(file);
     if (file) {
@@ -38,9 +40,9 @@ const UploadViewLayout = () => {
       };
       fileReader.readAsArrayBuffer(file);
     }
-
     await textToSpeech("简历上传成功，请稍等片刻，面试即将开始");
     setTimeout(() => {
+      setLoading(false)
       setPage("interview");
     }, 1000);
   };
@@ -94,7 +96,10 @@ const UploadViewLayout = () => {
                     uploadRef.current?.click();
                   }}
                 >
-                  <div className="mx-auto flex flex-col items-center space-y-2 text-center">
+                  {loading ? <div className="flex items-center justify-center flex-col gap-3">
+                    <Image src={LoadingSvg} width={30} height={30} alt="" className="animate-spin" />
+                    <span className="text-xs text-muted-foreground">简历上传中...</span>
+                  </div> : <div className="mx-auto flex flex-col items-center space-y-2 text-center">
                     <UploadIcon className="h-8 w-8 text-muted-foreground" />
                     <p className="text-sm font-medium text-muted-foreground">
                       点击上传
@@ -107,7 +112,7 @@ const UploadViewLayout = () => {
                       onChange={handleFileChange}
                       className="hidden"
                     />
-                  </div>
+                  </div>}
                 </div>
               </div>
             </CardContent>
