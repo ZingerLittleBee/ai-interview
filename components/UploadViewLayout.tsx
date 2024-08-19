@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import LoadingSvg from '@/public/loading.svg'
 
+
 const UploadViewLayout = () => {
   const { setFileUrl, setPage } = useInterviewStore();
   const { handleUpload } = useUpload();
@@ -56,7 +57,7 @@ const UploadViewLayout = () => {
               <div className="text-[#00716d] font-bold text-[18px]">
                 面试数量
               </div>
-              <div className="text-[#009688] font-bold text-[48px] leading-[48px]">
+              <div className="text-[#009688] font-bold text-[38px] leading-[38px]">
                 50+
               </div>
               <Image
@@ -71,8 +72,8 @@ const UploadViewLayout = () => {
               <div className="text-[#af150a] font-bold text-[18px]">
                 制作团队
               </div>
-              <div className="text-[#ff6345] font-bold text-[48px] leading-[48px]">
-                Muse
+              <div className="text-[#ff6345] font-bold text-[28px] leading-[28px] mt-2">
+                独行快，众行远
               </div>
               <Image
                 src="/heroSec-boy.png"
