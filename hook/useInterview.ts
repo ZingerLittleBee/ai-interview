@@ -18,7 +18,10 @@ export default function useInterview() {
       role: 'user'
     })
 
+  const start = async () => sendMsg('开始面试')
+
   return {
+    start,
     messages,
     sendMsg,
     input,
