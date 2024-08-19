@@ -9,9 +9,9 @@ import { useInterviewStore } from "@/store";
 import ChatWidget from "@/components/chat";
 import ChatSvg from "@/public/chat.svg";
 import ResumeSvg from "@/public/resume.svg";
-import { cn } from "@/lib/utils";
 import Image from 'next/image'
-import { twMerge } from "tailwind-merge";
+import {Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
+import {XCircleIcon} from "lucide-react";
 
 const WebcamInterviewPage = () => {
 
@@ -68,11 +68,11 @@ const WebcamInterviewPage = () => {
           </div>
         </div>
       </div>
-      <div className="h-screen pt-[62px] flex flex-col md:flex-row ">
+      <div className="h-screen pt-[78px] flex flex-col md:flex-row bg-muted p-4">
         {/* Left side for videos */}
-        <div className="md:w-2/3 w-full flex flex-col ">
+        <div className="md:w-2/3 w-full flex flex-col rounded-lg shadow-md overflow-hidden">
           {/* Webcam Video */}
-          <div className="bg-white px-4">面试进行中，加油哦～ </div>
+          <div className="bg-white p-4">面试进行中，加油哦～ </div>
           <div className="bg-white p-4 shadow-md flex-1">
             <div className="relative pb-9/16 h-full">
               <video
@@ -85,59 +85,56 @@ const WebcamInterviewPage = () => {
         </div>
 
         {/* Right side for transcription */}
-        <div className="md:w-1/3 w-full mt-4 md:mt-0  bg-white shadow-md flex flex-col">
-          <div className="flex items-center justify-center gap-2 absolute right-0 top-2 flex-col">
-            <div onClick={() => setTab("resume")} className={
-              twMerge("cursor-pointer hover:opacity-100 transition-all",
-                tab !== 'resume' && ' opacity-45'
-              )}>
-              <Image src={ResumeSvg} width={26} height={26} alt="" />
-            </div>
-            <div onClick={() => setTab("chat")} className={
-              twMerge("cursor-pointer hover:opacity-100 transition-all",
-                tab !== 'chat' && ' opacity-45'
-              )}>
-              <Image src={ChatSvg} width={24} height={24} alt="" />
-            </div>
-          </div>
-          {tab === "resume" && (
-            <div className="w-full h-full">
+        <div className="md:w-1/3 w-full mt-4 md:mt-0 md:ml-4 bg-white rounded-lg h-full shadow-md flex flex-col">
+          <Tabs value={tab} onValueChange={(v) => {setTab(v as "resume" | "chat")}} defaultValue="chat" className="flex flex-col h-full">
+            <div className="p-4">
+              <TabsList className="grid w-full grid-cols-2">
+                <TabsTrigger value="resume" className="flex gap-1">
+                  <Image src={ResumeSvg} width={20} height={20} alt=""/>
+                  <span>简历预览</span>
+                </TabsTrigger>
+                <TabsTrigger value="chat" className="flex gap-1">
+                  <Image src={ChatSvg} width={20} height={20} alt="" />
+                  <span>聊天信息</span>
+                </TabsTrigger>
+              </TabsList></div>
+            <TabsContent forceMount hidden={tab !== 'resume'} value="resume" className="overflow-auto rounded-lg">
               {fileUrl && (
-                <div
-                  className={`${isFullScreen ? "fixed inset-0 z-50" : "relative"
-                    } bg-black bg-opacity-75 flex items-center justify-center h-full overflow-auto`}
-                >
-                  <Worker
-                    workerUrl={`https://unpkg.com/pdfjs-dist@3.10.111/build/pdf.worker.min.js`}
+                  <div className={`${
+                      isFullScreen ? "fixed inset-0 z-50" : "relative my-4"
+                  } bg-opacity-75 flex items-center justify-center overflow-auto`}
                   >
-                    <div
-                      className={`${isFullScreen ? "h-screen w-screen" : "h-full w-full cursor-pointer"}`}
-                      onClick={() => {
-                        setIsFullScreen((v) => !v);
-                      }}
+                    <Worker
+                        workerUrl={`https://unpkg.com/pdfjs-dist@3.10.111/build/pdf.worker.min.js`}
                     >
-                      <Viewer
-                        fileUrl={fileUrl}
-                        plugins={[toolbarPluginInstance]}
-                      />
-                    </div>
-                  </Worker>
+                      <div
+                          className="h-full w-full"
+                          onClick={() => {
+                            setIsFullScreen((v) => !v);
+                          }}
+                      >
+                        <Viewer
+                            fileUrl={fileUrl}
+                            plugins={[toolbarPluginInstance]}
+                        />
+                      </div>
+                    </Worker>
 
-                  {isFullScreen && (
-                    <button
-                      onClick={() => setIsFullScreen(false)}
-                      className="absolute top-4 right-4 bg-gray-400 text-black rounded-full flex items-center justify-center shadow-lg w-[24px] h-[24px]"
-                    >
-                      x
-                    </button>
-                  )}
-                </div>
+                    {isFullScreen && (
+                        <button
+                            onClick={() => setIsFullScreen(false)}
+                            className="absolute top-4 right-4 bg-white text-black rounded-full shadow-lg"
+                        >
+                          <XCircleIcon />
+                        </button>
+                    )}
+                  </div>
               )}
-            </div>
-          )}
-          <ChatWidget className={
-            cn(tab === 'chat' ? 'flex' : 'hidden')
-          } />
+            </TabsContent>
+            <TabsContent forceMount hidden={tab !== 'chat'} value="chat" className="flex-1">
+              {ResumeWidget}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </>
