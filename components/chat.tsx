@@ -2,18 +2,31 @@
 
 import 'regenerator-runtime/runtime'
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
-import {useCallback, useEffect, useRef, useState} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
 import useInterview from "@/hook/useInterview";
 import {useLottie} from "lottie-react";
 import voiceAnimation from '@/public/voice.json'
 import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 import {Button} from "@/components/ui/button";
+import {useInterviewStore} from "@/store";
 
 export default function ChatWidget({ className} : {className?: string}) {
+
     const { messages, sendMsg, isPlaying, setIsPlaying, start } = useInterview();
     const endOfMessagesRef = useRef<HTMLDivElement>(null);
     const [isPaused, setIsPaused] = useState(true)
+    const { isTts } = useInterviewStore()
+
+    const status = useMemo(() => {
+        if (messages.length > 1) {
+            const msg = messages[messages.length - 1]
+            if (msg.id === isTts.id) {
+                return isTts.convert
+            }
+        }
+        return false
+    }, [isTts.convert, isTts.id, messages])
 
     const {
         transcript,
@@ -26,7 +39,7 @@ export default function ChatWidget({ className} : {className?: string}) {
     })
 
     const handleRecoding = useCallback(async () => {
-        if (isPlaying) return
+        if (isPlaying || !status) return
         if (isPaused) {
             play()
             await SpeechRecognition.startListening({
@@ -81,15 +94,25 @@ export default function ChatWidget({ className} : {className?: string}) {
                 }
 
                 <div className="bg-slate-800 p-4 flex items-center gap-2">
-                    <div
-                        className="flex flex-col w-full justify-center items-center  "
-                    >
-                        <div onClick={handleRecoding}
-                             className={cn(isPlaying ? 'cursor-not-allowed mix-blend-multiply' : 'cursor-pointer')}>{View}</div>
-                        <p className="text-muted/80">{
-                            isPlaying ? '请等待面试官语音' : `点击${isPaused ? '开始' : '结束'}回答`
-                        }</p>
-                    </div>
+                    {
+                        messages.length === 0 ? <div
+                            className="flex flex-col w-full justify-center items-center  "
+                        >
+                            <div
+                                 className='cursor-not-allowed mix-blend-multiply'>{View}</div>
+                            <p className="text-muted/80">{
+                                '请点击开始面试'
+                            }</p>
+                        </div> : <div
+                            className="flex flex-col w-full justify-center items-center  "
+                        >
+                            <div onClick={handleRecoding}
+                                 className={cn(!status || isPlaying ? 'cursor-not-allowed mix-blend-multiply' : 'cursor-pointer')}>{View}</div>
+                            <p className="text-muted/80">{
+                                isPlaying ? '请等待面试官语音' : `点击${isPaused ? '开始' : '结束'}回答`
+                            }</p>
+                        </div>
+                    }
                 </div>
             </div>
     )

@@ -1,13 +1,19 @@
 import { useChat } from "ai/react";
 import useTextToSpeech from "@/hook/useTextToSpeech";
+import {useInterviewStore} from "@/store";
 
 export default function useInterview() {
 
   const { textToSpeech, isPlaying, setIsPlaying } = useTextToSpeech()
+  const { setIsTts } = useInterviewStore()
 
   const { messages, input, handleInputChange, handleSubmit, append } = useChat({
     onFinish: (message) => {
-      textToSpeech(message.content);
+      void textToSpeech(message.content, message.id);
+      setIsTts({
+        id: message.id,
+        convert: false
+      })
     },
   });
 

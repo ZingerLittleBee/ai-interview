@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback } from 'react';
+import {useInterviewStore} from "@/store";
 
 const useTextToSpeech = () => {
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const { setIsTts } = useInterviewStore()
 
-    const textToSpeech = useCallback(async (prompt: string) => {
+    const textToSpeech = useCallback(async (prompt: string, id?: string) => {
         const response = await fetch('/api/tts', {
             method: 'POST',
             headers: {
@@ -33,7 +35,13 @@ const useTextToSpeech = () => {
         // 播放音频
         await newAudio.play();
         setIsPlaying(true); // 更新播放状态
-    }, []);
+        if (id) {
+            setIsTts({
+                id,
+                convert: true
+            })
+        }
+    }, [setIsTts]);
 
     // 播放音频
     const play = () => {

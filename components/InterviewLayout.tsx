@@ -131,7 +131,7 @@ const WebcamInterviewPage = () => {
                   </div>
               )}
             </TabsContent>
-            <TabsContent forceMount hidden={tab !== 'chat'} value="chat" className="flex-1">
+            <TabsContent forceMount hidden={tab !== 'chat'} value="chat" className="flex-1 overflow-auto">
               {ResumeWidget}
             </TabsContent>
           </Tabs>
