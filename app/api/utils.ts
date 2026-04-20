@@ -5,7 +5,7 @@ export const pdfToString = (pdfPath: string): Promise<string> => {
         const pdfParser = new PDFParser(null, true);
 
         pdfParser.on("pdfParser_dataError", (errData) => {
-            reject(errData.parserError);
+            reject(errData instanceof Error ? errData : errData.parserError);
         });
 
         pdfParser.on("pdfParser_dataReady", () => {

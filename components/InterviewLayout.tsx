@@ -1,36 +1,36 @@
 "use client"
 
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Viewer, Worker } from "@react-pdf-viewer/core";
-import { toolbarPlugin } from "@react-pdf-viewer/toolbar";
-import "@react-pdf-viewer/core/lib/styles/index.css";
-import "@react-pdf-viewer/toolbar/lib/styles/index.css";
 import { useInterviewStore } from "@/store";
 import ChatWidget from "@/components/chat";
 import ChatSvg from "@/public/chat.svg";
 import ResumeSvg from "@/public/resume.svg";
 import Image from 'next/image'
+import dynamic from "next/dynamic";
 import {Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
-import {XCircleIcon} from "lucide-react";
+
+const ResumePdfViewer = dynamic(() => import("./ResumePdfViewer"), {
+  ssr: false,
+});
 
 const WebcamInterviewPage = () => {
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const { fileUrl } = useInterviewStore();
-  const toolbarPluginInstance = toolbarPlugin();
-  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const [tab, setTab] = useState<"resume" | "chat">("resume");
 
 
   useEffect(() => {
+    const videoElement = videoRef.current;
+
     // Request access to the webcam
     const getVideo = async () => {
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: true,
         });
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
+        if (videoElement) {
+          videoElement.srcObject = stream;
         }
       } catch (err) {
         console.error("Error accessing the webcam: ", err);
@@ -41,8 +41,8 @@ const WebcamInterviewPage = () => {
 
     // Cleanup function to stop the video stream when the component unmounts
     return () => {
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
+      if (videoElement && videoElement.srcObject) {
+        const stream = videoElement.srcObject as MediaStream;
         const tracks = stream.getTracks();
         tracks.forEach((track) => {
           track.stop();
@@ -100,35 +100,7 @@ const WebcamInterviewPage = () => {
               </TabsList></div>
             <TabsContent forceMount hidden={tab !== 'resume'} value="resume" className="overflow-auto rounded-lg">
               {fileUrl && (
-                  <div className={`${
-                      isFullScreen ? "fixed inset-0 z-50" : "relative my-4"
-                  } bg-opacity-75 flex items-center justify-center overflow-auto`}
-                  >
-                    <Worker
-                        workerUrl={`https://unpkg.com/pdfjs-dist@3.10.111/build/pdf.worker.min.js`}
-                    >
-                      <div
-                          className="h-full w-full"
-                          onClick={() => {
-                            setIsFullScreen((v) => !v);
-                          }}
-                      >
-                        <Viewer
-                            fileUrl={fileUrl}
-                            plugins={[toolbarPluginInstance]}
-                        />
-                      </div>
-                    </Worker>
-
-                    {isFullScreen && (
-                        <button
-                            onClick={() => setIsFullScreen(false)}
-                            className="absolute top-4 right-4 bg-white text-black rounded-full shadow-lg"
-                        >
-                          <XCircleIcon />
-                        </button>
-                    )}
-                  </div>
+                <ResumePdfViewer fileUrl={fileUrl} />
               )}
             </TabsContent>
             <TabsContent forceMount hidden={tab !== 'chat'} value="chat" className="flex-1 overflow-auto">
